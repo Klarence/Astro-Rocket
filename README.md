@@ -12,7 +12,7 @@
   <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5.7-3178c6?logo=typescript&logoColor=white" alt="TypeScript" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-22c55e" alt="License" /></a>
   <a href="https://github.com/hansmartens68/astro-rocket"><img src="https://img.shields.io/github/stars/hansmartens68/astro-rocket?style=flat&label=%E2%AD%90%20Star%20on%20GitHub&color=f59e0b" alt="Star on GitHub" /></a>
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=hansmartens68.astro-rocket" alt="Visitors" />
+  <a href="https://github.com/hansmartens68/astro-rocket"><img src="https://visitor-badge.laobi.icu/badge?page_id=hansmartens68.astro-rocket" alt="Visitors" /></a>
 </p>
 
 ---
@@ -42,7 +42,7 @@ The following changes were made to the free Velocity theme to create Astro Rocke
 | **Blog image gradients** | Plain image containers | Every blog cover and card uses a brand-color gradient background that updates live when the active theme changes |
 | **Icon system** | Basic SVG `Icon` component | Unified `Icon` component powered by Iconify — 350+ Lucide UI icons + 3000+ Simple Icons brand icons |
 | **Typing effect** | Not included | Hero section includes an animated typing effect |
-| **Dark mode storage** | `localStorage` | `sessionStorage` — resets to dark on every new tab/session (see [why](#dark-mode)) |
+| **Colour mode** | Binary `localStorage` toggle | 3-state picker — System / Light / Dark in `localStorage`, with `prefers-color-scheme` live tracking under 'System' (see [Colour Mode](#colour-mode)) |
 | **Target audience** | Developers & agencies | Web designers, developers, bloggers, and portfolio sites |
 | **Ready to launch** | Boilerplate starting point | Fully styled pages — replace the text and your site is live |
 | **Maintained by** | Southwell Media | Hans Martens |
@@ -58,21 +58,41 @@ The following changes were made to the free Velocity theme to create Astro Rocke
 | **12 Colour Themes** | All 12 colour swatches are shown in the header dropdown — click one and the logo badge, blog image gradients, and every brand color update live instantly. No file edits, no rebuilds. The selector can be removed from the header once you've settled on a color. |
 | **Scroll Progress Bar** | A thin 2px brand-coloured bar on the header edge that fills as you scroll. Enabled on the homepage (above the floating header), blog index, and post pages (below the solid header). Controlled via `showScrollProgress` and `scrollProgressPosition` props on the Header component. |
 | **Design Tokens** | Three-tier token architecture (reference → semantic → component) |
-| **57 Components** | 31 UI, 7 patterns, 1 hero, 4 layout, 4 blog, 7 landing, 3 SEO — all accessible with TypeScript |
+| **57 Components** | 33 UI, 7 patterns, 1 hero, 4 layout, 4 blog, 7 landing, 3 SEO — all accessible with TypeScript |
 | **Auto Logo & Favicon** | First letter of your site name on brand color — generated automatically from `site.config.ts`, no design tools needed |
 | **Icon System** | Unified `Icon` component (Astro + React) — 350+ [Lucide](https://lucide.dev) UI icons and 3000+ [Simple Icons](https://simpleicons.org) brand icons via Iconify |
 | **Typing Effect** | Animated typing effect in the hero section |
 | **Page Animations** | Smooth page transitions via Astro View Transitions, scroll-triggered counter and score animations, scroll-reactive header, card hover effects, and a full suite of UI micro-animations — all with reduced-motion support |
 | **SEO Toolkit** | Meta tags, JSON-LD structured data, sitemap, and robots.txt |
 | **Static OG Image** | A polished default Open Graph image serves as social preview for all pages — no build-time generation required |
-| **Dark Mode** | Dark-first design with `sessionStorage` persistence |
+| **Colour Mode** | 3-state picker — **System / Light / Dark** with `localStorage` persistence and live OS-preference tracking under 'System'; surfaced as a pill dropdown in the header (and inside the mobile menu) |
 | **Content Collections** | Type-safe blog, pages, authors, and FAQs with Zod validation |
 | **API Routes** | Contact form and newsletter endpoints with validation |
 | **React Islands** | Optional client-side interactivity where needed |
 
 ### Internationalization (i18n)
 
-The base theme is i18n-ready with locale-aware content collection schemas. Full i18n support with language routing and a `LanguageSwitcher` component can be added via the **[create-velocity-astro](https://github.com/southwellmedia/create-velocity-astro)** CLI from Southwell Media.
+The base theme is i18n-ready with locale-aware content collection schemas. Full i18n support — locale-prefixed routes, a `LanguageSwitcher` component, translated navigation, and `hreflang` SEO tags — can be added via the **[create-velocity-astro](https://github.com/southwellmedia/create-velocity-astro)** CLI from Southwell Media.
+
+#### Enabling full i18n
+
+Scaffold a fresh project with i18n turned on:
+
+```bash
+# Pick your package manager
+npm create velocity-astro@latest my-site -- --i18n
+pnpm create velocity-astro my-site --i18n
+yarn create velocity-astro my-site --i18n
+```
+
+Omit `--i18n` to be prompted interactively. The CLI then adds:
+
+- Locale-prefixed routes (`/en/`, `/es/`, `/fr/`, …)
+- A `LanguageSwitcher` component wired into the header
+- Translated navigation and example content per locale
+- `hreflang` SEO tags on every page
+
+For the full list of options and prompts, see the [create-velocity-astro README](https://github.com/southwellmedia/create-velocity-astro). The CLI is maintained by Southwell Media and is the source of truth for i18n setup.
 
 ---
 
@@ -122,7 +142,7 @@ astro-rocket/
 │   │   │   ├── content/     # CodeBlock
 │   │   │   └── marketing/   # Logo, CTA, NpmCopyButton, SocialProof, TerminalDemo
 │   │   ├── patterns/        # Composed patterns (ContactForm, SearchInput, StatCard, etc.)
-│   │   ├── layout/          # Header, Footer, Navigation, ThemeToggle, ThemeSelector
+│   │   ├── layout/          # Header, Footer, Navigation, ThemeModeDropdown, ThemeSelector(Dropdown)
 │   │   ├── seo/             # SEO, JsonLd, Breadcrumbs
 │   │   ├── blog/            # Blog-specific components
 │   │   └── landing/         # Landing page components
@@ -271,23 +291,39 @@ OKLCH values are `oklch(lightness chroma hue)`. To shift your brand to blue, cha
 
 3. Update the import in `src/styles/tokens/colors.css` to point to your new theme file
 
-### Dark Mode
+### Colour Mode
 
-Dark mode toggles via the `.dark` class on `<html>`. The default is **dark** — the design was built dark-first and it looks great for portfolios and creative sites.
+Astro Rocket ships a 3-state colour-mode system — **System / Light / Dark** — instead of a binary toggle. The user's choice is persisted in `localStorage` under the key `theme`, and the resolved appearance is applied via the `.dark` class on `<html>`. Under `'system'`, the page tracks `window.matchMedia('(prefers-color-scheme: dark)')` live, so flipping the OS theme updates the page in real time without a reload.
 
-FOUC is prevented by an inline script that reads `sessionStorage` before first paint. Use the included `ThemeToggle` component:
+State contract:
+
+| Storage / DOM | Values | Role |
+|---|---|---|
+| `localStorage.theme` | `'system' \| 'light' \| 'dark'` | The user's saved choice (default `'system'`) |
+| `<html data-theme-mode="…">` | mirrors the saved mode | Drives the trigger icon (monitor / sun / moon) via CSS |
+| `<html>.dark` | present or absent | Resolved appearance — Tailwind dark variant keys off this |
+
+Defaults are seeded directly on the `<html>` element in `src/layouts/BaseLayout.astro` so JS-disabled visitors still see a sensible state:
+
+```html
+<html lang="en" class="scroll-smooth dark" data-theme="blue" data-theme-mode="system">
+```
+
+Flash-of-wrong-theme is prevented by an inline `<script>` in `<head>` that runs synchronously before body paint, reads `localStorage.theme`, and reconciles `data-theme-mode` + `.dark`. The same script also re-applies on `astro:before-swap` / `astro:after-swap` to handle view transitions, and subscribes once to the OS-preference media query.
+
+The picker is exposed as a pill-shaped dropdown in the header — `ThemeModeDropdown` — and re-rendered inside the mobile menu below the `md` breakpoint, so both desktop and mobile users get the full 3-state picker:
 
 ```astro
 ---
-import ThemeToggle from '@/components/layout/ThemeToggle.astro';
+import ThemeModeDropdown from '@/components/layout/ThemeModeDropdown.astro';
 ---
 
-<ThemeToggle />
+<ThemeModeDropdown />
 ```
 
-To opt out of dark mode, remove the `.dark { ... }` block from your theme file.
+The full design — bootstrap script, dropdown anatomy, the live "Currently dark/light" sub-line under 'System', and how two component instances stay state-synced — is written up in the [System, Light, Dark blog post](https://astrorocket.dev/blog/colour-mode-system).
 
-> **Why `sessionStorage` instead of `localStorage`?** This is a deliberate choice. `sessionStorage` persists the user's preference during their visit but resets when the tab is closed — so every new visit starts with the intended dark design. For a portfolio or marketing site this is the right call. For a product users return to daily (a SaaS dashboard, editor, etc.), switch to `localStorage` so the preference survives across sessions. Read the full reasoning in [this blog post](https://hansmartens.dev/blog/dark-mode-sessionstorage).
+> **Why `localStorage` for colour mode but `sessionStorage` for the colour palette?** They serve different intents. The colour mode is the user's accessibility / preference setting and should survive reloads and new tabs — `localStorage`. The 12-swatch colour palette is a brand-discovery toy that should reset on every new visit so first impressions stay on-brand — `sessionStorage`. Keeping them on different storage tiers is intentional, not accidental.
 
 ### WCAG Contrast Requirements
 
@@ -414,7 +450,7 @@ Astro Rocket includes 57 components across 7 categories. All UI components use [
 | Category | Count | Components |
 |----------|-------|------------|
 | Hero | 1 | Hero section with centered/split layouts, grid pattern, and typing effect |
-| Layout | 6 | Header (with scroll progress bar), Footer, ThemeToggle, ThemeSelector, ThemeSelectorDropdown, Analytics |
+| Layout | 6 | Header (with scroll progress bar), Footer, ThemeModeDropdown, ThemeSelector, ThemeSelectorDropdown, Analytics |
 | Blog | 4 | ArticleHero, BlogCard, ShareButtons, RelatedPosts |
 | Landing | 5 | Credibility, LighthouseScores, TechStack, FeatureTabs, and more |
 | SEO | 3 | SEO, JsonLd, Breadcrumbs |

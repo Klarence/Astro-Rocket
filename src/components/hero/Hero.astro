@@ -12,22 +12,25 @@ interface Props extends HTMLAttributes<'section'> {
   showGrid?: boolean;
   /** Show brand-coloured radial glow blobs behind the content */
   showGlow?: boolean;
+  /** Show decorative gradient blob */
+  showBlob?: boolean;
+  /** Blob position (only applies when showBlob is true) */
+  blobPosition?: 'left' | 'right' | 'center';
   /** Fade the bottom of the section into the next section's background */
   bottomFade?: boolean;
   /** Show an animated scroll indicator at the bottom (desktop only, hides on scroll) */
   showScrollIndicator?: boolean;
-  /** Max-width class for the description wrapper (default: max-w-xl) */
-  descriptionClass?: string;
 }
 
 const {
   layout = 'centered',
   size = 'lg',
   showGrid = false,
+  showBlob = false,
+  blobPosition: _blobPosition = 'center',
   showGlow = false,
   bottomFade = false,
   showScrollIndicator = false,
-  descriptionClass = 'max-w-xl',
   class: className,
   ...attrs
 } = Astro.props;
@@ -59,9 +62,8 @@ const gridClasses = cn(
 <section class={sectionClasses} {...attrs}>
   {showGrid && (
     <div
-      class="bg-grid-pattern pointer-events-none absolute inset-x-0 -inset-y-[20%] opacity-30 hidden dark:block"
-      style="mask-image: radial-gradient(ellipse 50% 50% at 50% 40%, black 0%, transparent 70%);"
-      data-parallax="0.2"
+      class="bg-grid-pattern pointer-events-none absolute inset-x-0 -inset-y-[20%] opacity-30 hidden md:dark:block"
+      style="mask-image: radial-gradient(ellipse 50% 50% at 50% 40%, black 0%, transparent 70%); -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 40%, black 0%, transparent 70%);"
       aria-hidden="true"
     />
   )}
@@ -73,9 +75,25 @@ const gridClasses = cn(
     </>
   )}
 
+  {showBlob && (
+    <>
+      <div
+        class="pointer-events-none absolute hidden dark:block dark:opacity-[0.20] rounded-full blur-[120px] h-[500px] w-[500px] -left-20 top-0 -translate-y-1/4"
+        style="background: radial-gradient(ellipse at center, var(--color-brand-400) 0%, transparent 70%);"
+        aria-hidden="true"
+      />
+      <div
+        class="pointer-events-none absolute hidden dark:block dark:opacity-[0.20] rounded-full blur-[120px] h-[500px] w-[500px] -right-20 top-0 -translate-y-1/4"
+        style="background: radial-gradient(ellipse at center, var(--color-brand-400) 0%, transparent 70%);"
+        aria-hidden="true"
+      />
+    </>
+  )}
+
   {bottomFade && (
     <div class="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background-secondary hidden dark:block" aria-hidden="true" />
   )}
+
 
   {showScrollIndicator && (
     <div class="scroll-indicator-wrapper absolute bottom-14 left-1/2 -translate-x-1/2 z-10" aria-hidden="true">
@@ -92,7 +110,7 @@ const gridClasses = cn(
 
   <div class={gridClasses}>
     {/* Content Column */}
-    <div class={cn(contentClasses, 'order-1 lg:order-none animate-hero-slide-up')}>
+    <div class={cn(contentClasses, 'order-1 lg:order-none animate-hero-stagger')}>
       {/* Badge Slot */}
       {hasBadgeSlot && (
         <div class="mb-[var(--space-heading-gap)]">
@@ -114,8 +132,7 @@ const gridClasses = cn(
       {/* Description Slot */}
       {hasDescriptionSlot && (
         <div class={cn(
-          'mb-[var(--space-stack-lg)] text-lg leading-relaxed text-foreground-muted',
-          descriptionClass,
+          'mb-[var(--space-stack-lg)] max-w-xl text-lg leading-relaxed text-foreground-muted',
           '[&>p]:text-lg [&>p]:leading-relaxed [&>p]:text-foreground-muted',
           layout === 'centered' && 'mx-auto'
         )}>
@@ -147,8 +164,7 @@ const gridClasses = cn(
 </section>
 
 <style>
-  /* Desktop-only: require both a minimum width and minimum height so phones
-     in landscape mode (wide but short) are excluded. */
+  /* Desktop only: hide on landscape mobile (phones max out ~430px tall) */
   .scroll-indicator-wrapper {
     display: none;
   }
@@ -190,6 +206,7 @@ const gridClasses = cn(
     50%       { transform: translateY(5px); }
   }
 
+
   @media (prefers-reduced-motion: reduce) {
     .scroll-indicator              { animation: none; opacity: 1; }
     .scroll-indicator-chevron,
@@ -198,59 +215,29 @@ const gridClasses = cn(
 </style>
 
 <script>
-  // Parallax: move [data-parallax] layers at a fraction of scroll speed.
-  // Elements with -inset-y-[20%] have extra room to move without clipping.
-  // Skipped entirely when the user prefers reduced motion.
-  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    function initParallax() {
-      const layers = document.querySelectorAll<HTMLElement>('[data-parallax]');
-      if (!layers.length) return;
-
-      function applyParallax() {
-        layers.forEach((el) => {
-          const section = el.closest('section');
-          if (!section) return;
-
-          const rect = section.getBoundingClientRect();
-          // Skip sections fully outside the viewport
-          if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-
-          const speed = parseFloat(el.dataset.parallax ?? '0.3');
-          // Offset relative to how far the section top is from the viewport top
-          const offset = -rect.top * speed;
-          el.style.transform = `translateY(${offset.toFixed(2)}px)`;
-        });
-      }
-
-      window.addEventListener('scroll', applyParallax, { passive: true });
-      applyParallax();
-
-      document.addEventListener('astro:before-swap', () => {
-        window.removeEventListener('scroll', applyParallax);
-      }, { once: true });
-    }
-
-    document.addEventListener('astro:page-load', initParallax);
-  }
-
   // Scroll indicator: fade out once the user starts scrolling.
+  // Stored on window so re-init across navigations replaces the previous
+  // listener instead of stacking handlers.
   function initScrollIndicator() {
     const indicator = document.querySelector<HTMLElement>('.scroll-indicator');
     if (!indicator) return;
 
+    const w = window as Window & { __scrollIndicatorHandler?: () => void };
+    if (w.__scrollIndicatorHandler) {
+      window.removeEventListener('scroll', w.__scrollIndicatorHandler);
+    }
+
     function onScroll() {
       if (window.scrollY > 50) {
-        indicator!.classList.add('is-hidden');
+        indicator?.classList.add('is-hidden');
         window.removeEventListener('scroll', onScroll);
+        delete w.__scrollIndicatorHandler;
       }
     }
 
+    w.__scrollIndicatorHandler = onScroll;
     window.addEventListener('scroll', onScroll, { passive: true });
-
-    document.addEventListener('astro:before-swap', () => {
-      window.removeEventListener('scroll', onScroll);
-    }, { once: true });
   }
 
-  document.addEventListener('astro:page-load', initScrollIndicator);
+  initScrollIndicator();
 </script>

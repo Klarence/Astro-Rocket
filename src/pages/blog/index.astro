@@ -38,7 +38,7 @@ const getPostUrl = (postId: string) => {
 };
 ---
 
-<PageLayout title="Blog — Astro Rocket" description="Articles on web design, development, and the web by Astro Rocket." showScrollProgress>
+<PageLayout title="Blog — Astro Rocket" description="Articles on web design, development, and the web by Astro Rocket." showScrollProgress eagerReveal>
   <Hero layout="centered" size="sm">
     <Badge slot="badge" variant="brand" pill>
       <Icon name="book" size="sm" />
@@ -59,7 +59,7 @@ const getPostUrl = (postId: string) => {
             Featured
           </h2>
 
-          <div class="grid gap-6 md:grid-cols-2" data-reveal data-reveal-delay="1">
+          <div class="grid gap-6 md:grid-cols-2">
             {featuredPosts.map((post) => (
               <div class="post-card" data-tags={JSON.stringify(post.data.tags)}>
                 <BlogCard
@@ -118,7 +118,7 @@ const getPostUrl = (postId: string) => {
 
       {
         regularPosts.length > 0 ? (
-          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal data-reveal-delay="1">
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {regularPosts.map((post) => (
               <div class="post-card" data-tags={JSON.stringify(post.data.tags)}>
                 <BlogCard
@@ -245,5 +245,5 @@ const getPostUrl = (postId: string) => {
     });
   }
 
-  document.addEventListener('astro:page-load', initTagFilter);
+  initTagFilter();
 </script>

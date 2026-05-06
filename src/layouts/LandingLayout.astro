@@ -21,6 +21,7 @@ interface Props {
   includeOrgSchema?: boolean;
   includePersonSchema?: boolean;
   includeProfessionalServiceSchema?: boolean;
+  morphToBar?: boolean;
 }
 
 const {
@@ -33,9 +34,8 @@ const {
   includeOrgSchema = false,
   includePersonSchema = false,
   includeProfessionalServiceSchema = false,
+  morphToBar = false,
 } = Astro.props;
-
-const isHomePage = Astro.url.pathname === '/';
 ---
 
 <BaseLayout
@@ -53,14 +53,16 @@ const isHomePage = Astro.url.pathname === '/';
     slot="header"
     position="fixed"
     shape="floating"
-    variant="default"
+    variant="transparent"
     colorScheme="default"
     size="lg"
     showCta={true}
     cta={{ label: 'Book a Demo', href: 'mailto:info@elorahq.com' }}
     showThemeSelector
-    showScrollProgress={isHomePage}
+    autoHide={false}
     scrollProgressPosition="top"
+    invertOnReturn={false}
+    morphToBar={morphToBar}
   />
 
   <slot />

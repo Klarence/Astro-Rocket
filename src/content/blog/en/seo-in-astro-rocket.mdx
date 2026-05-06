@@ -1,7 +1,7 @@
 ---
 title: "SEO in Astro Rocket: What's Built In and How to Configure It"
 description: "Astro Rocket handles structured data, Open Graph, canonical URLs, sitemaps, and more out of the box. Here's exactly what ships and where to configure it."
-publishedAt: 2026-03-17
+publishedAt: 2026-04-17
 author: "Hans Martens"
 tags: ["astro-rocket", "seo", "structured-data", "tutorial", "configuration"]
 featured: false
@@ -30,11 +30,11 @@ None of these require per-page setup. They are wired into the base layout and ru
 
 Structured data is the part most themes skip. Astro Rocket outputs [JSON-LD](https://json-ld.org/) schema.org markup on every page.
 
-**Home page** outputs three schemas:
+**Home page** outputs three schemas (exact set depends on which schema props are enabled in `src/pages/index.astro`):
 
-- `WebSite` — site name, URL, and search action
-- `Organization` — your organisation name, logo, and contact details
-- `Person` — the site author
+- `WebSite` — site name, URL, and search action (always included)
+- `Person` — the site author (enabled by default via `includePersonSchema`)
+- `ProfessionalService` — professional service details with address and area served (enabled by default via `includeProfessionalServiceSchema`)
 
 **Blog posts** output `BlogPosting` with full metadata:
 
