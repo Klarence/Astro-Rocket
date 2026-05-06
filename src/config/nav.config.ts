@@ -12,10 +12,15 @@ export interface NavItem {
 }
 
 export const navItems: NavItem[] = [
-  { label: 'Blog', href: '/blog', order: 1 },
-  { label: 'Projects', href: '/projects', order: 2 },
-  { label: 'About', href: '/about', order: 3 },
-  { label: 'Contact', href: '/contact', order: 4 },
+  { label: 'About', href: '/about', order: 1 },
+  { label: 'ROI Calculator', href: '/roi-calculator', order: 2 },
+  { label: 'Team', href: '/team', order: 3 },
+  { label: 'Privacy & Security', href: '/privacy', order: 4 },
+  {
+    label: 'Trust Center',
+    href: 'https://app.vanta.com/elorahq.com/trust/3o0xy0fhz2io3h82sywucb',
+    order: 5,
+  },
 ];
 
 /**

@@ -58,30 +58,21 @@ export interface SiteConfig {
 }
 
 const siteConfig: SiteConfig = {
-  name: 'Astro Rocket',
+  name: 'EloraHQ',
   description:
-    'Astro Rocket — A production-ready Astro 6 starter with 12 beautiful themes, 57+ components, built-in i18n, dark mode and a fast, modern foundation to build anything on.',
-  url: SITE_URL || 'https://astrorocket.dev',
+    'Empowering care from the frontlines, all the way up. Elora takes care of the busywork, you take care of the people.',
+  url: SITE_URL || 'https://elorahq.com',
   ogImage: '/og-default.svg',
-  author: 'Hans Martens',
-  email: 'hello@hansmartens.dev',
+  author: 'EloraHQ',
+  email: 'info@elorahq.com',
   address: {
     street: '',
-    city: 'Veghel',
-    state: '',
+    city: 'Seattle',
+    state: 'Washington',
     zip: '',
-    country: 'the Netherlands',
+    country: 'USA',
   },
-  socialLinks: [
-    'https://github.com/hansmartens68/Astro-Rocket',
-    'https://x.com/hansmartens_dev',
-    'https://www.linkedin.com',
-    'https://bsky.app/profile/hansmartens-online.bsky.social',
-  ],
-  twitter: {
-    site: 'https://x.com/hansmartens_dev',
-    creator: '@hansmartens_dev',
-  },
+  socialLinks: ['https://www.linkedin.com/company/elorahq'],
   verification: {
     google: GOOGLE_SITE_VERIFICATION,
     bing: BING_SITE_VERIFICATION,
@@ -90,14 +81,14 @@ const siteConfig: SiteConfig = {
   blogImageOverlay: true,
   branding: {
     logo: {
-      alt: 'Astro Rocket',
+      alt: 'EloraHQ',
       imageUrl: '/favicon.svg',
     },
     favicon: {
       svg: '/favicon.svg',
     },
     colors: {
-      themeColor: '#3b82f6',
+      themeColor: '#7A4988',
       backgroundColor: '#ffffff',
     },
   },

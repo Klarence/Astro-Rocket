@@ -5,373 +5,433 @@ import Button from '@/components/ui/form/Button/Button.astro';
 import Badge from '@/components/ui/data-display/Badge/Badge.astro';
 import Card from '@/components/ui/data-display/Card/Card.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
-import BlogCard from '@/components/blog/BlogCard.astro';
-import { getCollection } from 'astro:content';
-import siteConfig from '@/config/site.config';
+import Accordion from '@/components/ui/data-display/Accordion/Accordion.astro';
 
-const projectItems = await getCollection('projects');
-const featuredProjects = projectItems
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 4);
+interface Testimonial {
+  quote: string;
+  name: string;
+  title: string;
+}
 
-const posts = (await getCollection('blog', ({ data }) => !data.draft))
-  .sort((a, b) => {
-    if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
-    return b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf();
-  })
-  .slice(0, 3);
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+const FAQ_ITEMS: FAQItem[] = [
+  {
+    question: 'Is Elora HIPAA compliant?',
+    answer:
+      'Yes. Elora is HIPAA and SOC2 certified. We maintain hospital-grade security and compliance standards to protect patient data and ensure your organization meets regulatory requirements.',
+  },
+  {
+    question: 'Does Elora use patient data to train its AI?',
+    answer:
+      'No. Your client data is yours. We use a proprietary AI and Data Privacy framework that never uses your data to train our models. We steward your data with Responsible AI principles.',
+  },
+  {
+    question: 'Will AI replace our care managers?',
+    answer:
+      'Absolutely not. Elora is designed to empower, not replace, your team. Our AI automates reporting and busywork so your care managers can focus on what they do best: caring for people.',
+  },
+  {
+    question: 'How does Elora protect patient data across partner organizations?',
+    answer:
+      'Elora uses a proprietary data privacy framework with hospital-grade security. Data is encrypted at rest and in transit, and access controls ensure that each organization only sees what they are authorized to see.',
+  },
+  {
+    question: 'Does Elora integrate with our EHR?',
+    answer:
+      'Elora is designed to integrate with existing systems and workflows. Contact our team to learn about integration options for your specific EHR and technology stack.',
+  },
+  {
+    question: 'How does Elora ensure care is delivered equitably?',
+    answer:
+      'Elora was built by frontline care teams with equity at its core. Our platform is designed to reduce barriers and co-create a future where care is operational, equitable, and financially sustainable.',
+  },
+];
+
+const POPULATIONS = [
+  'Senior Care',
+  'Youth & Family Services',
+  'Veteran Support',
+  'Behavioral Health',
+  'Maternal Health',
+  'Dementia & Caregiver Support',
+  'Substance Use',
+  'Foundational & Community Support',
+  'Housing',
+  'Food Banks',
+  'Mobile Integrated Health',
+  'Reentry',
+];
+
+const TESTIMONIALS: Testimonial[] = [
+  {
+    quote:
+      "It's tracking the solution to multiple social determinants of health and addressing those things in a patient-centered manner, really improving the overall health of that person and reducing their costs in the system—with the data to prove it.",
+    name: 'Katie W.',
+    title: 'Programs & Compliance Administrator, Hub',
+  },
+  {
+    quote: 'In 5 minutes, Elora gives patients a little bit of hope and something to act on.',
+    name: 'Mika W.',
+    title: 'CARES Specialist, Fire Department',
+  },
+  {
+    quote:
+      "It's really connecting our boots on the ground, whatever their position might be, to resources for our more isolated community members.",
+    name: 'Katie M.',
+    title: 'Executive Administrator, Regional Fire Authority MHP',
+  },
+  {
+    quote: 'This is freeing up all our time.',
+    name: 'Rosie K.',
+    title: 'Care Worker, Human Services Department',
+  },
+  {
+    quote: 'I wake up and I can finally see across agencies, caseloads, and patients.',
+    name: 'Jess D.',
+    title: 'Supervisor, Regional Health Hub',
+  },
+  {
+    quote:
+      "It's doing the reporting that's necessary for us to understand the work and stay compliant.",
+    name: 'Katie',
+    title: 'Director, Care Management',
+  },
+  {
+    quote: 'We are landing the contracts.',
+    name: 'John A.',
+    title: 'CEO, Hub',
+  },
+];
 ---
 
 <LandingLayout
-  title="Astro Rocket — Astro 6 starter theme"
-  description="A production-ready Astro 6 starter with 12 beautiful themes, 57+ components, built-in i18n, dark mode and a fast, modern foundation to build anything on."
+  title="EloraHQ — More Care, Less Paperwork"
+  description="Empowering care from the frontlines, all the way up. Elora takes care of the busywork, you take care of the people."
   image="/og-default.svg"
-  includePersonSchema={true}
-  includeProfessionalServiceSchema={true}
+  includeOrgSchema={true}
 >
   <!-- Hero -->
-  <Hero layout="centered" size="xl" class="hero-dark-gradient" showScrollIndicator descriptionClass="max-w-3xl">
-    <Badge slot="badge" variant="brand" pill pulse class="dark:text-brand-200">Available for new projects</Badge>
+  <Hero
+    layout="centered"
+    size="xl"
+    class="hero-dark-gradient"
+    showScrollIndicator
+    showGlow
+    descriptionClass="max-w-2xl"
+  >
+    <Badge slot="badge" variant="brand" pill class="dark:text-brand-200">
+      HIPAA & SOC2 Certified
+    </Badge>
 
     <h1 slot="title">
-      <span class="text-foreground [-webkit-text-fill-color:currentColor]">Astro Rocket —</span><br />
-      <span class="text-brand-500 [-webkit-text-fill-color:var(--color-brand-500)] dark:text-foreground dark:[-webkit-text-fill-color:currentColor]">Web Designer</span><span class="text-foreground [-webkit-text-fill-color:currentColor]"> &amp; Developer</span>
+      <span class="text-foreground [-webkit-text-fill-color:currentColor]">
+        More Care, Less Paperwork
+      </span>
     </h1>
 
     <p slot="description">
-      A production-ready Astro 6 starter with 12 beautiful themes, 57+ components, built-in i18n, dark mode and a fast, modern foundation to build anything on.
+      Elora Takes Care of the Busywork, You Take Care of the People.<br />
+      Elora's proprietary conversational AI automates reporting and coordinates support, so frontline
+      care workers can focus on what they do best: care.
     </p>
 
-   <Fragment slot="actions">
-      <Button size="lg" href="https://github.com/hansmartens68/Astro-Rocket">
-        <Icon name="github" size="sm" />
-        Get it on GitHub
-      </Button>
-      <Button size="lg" variant="outline" href="/blog/astro-rocket-getting-started">
-        <Icon name="rocket" size="sm" />
-        Get started
+    <div slot="actions">
+      <Button size="lg" href="mailto:info@elorahq.com">
+        Book a Demo
         <Icon name="arrow-right" size="sm" />
       </Button>
-    </Fragment>
+    </div>
+
+    <!-- Trust badges -->
+    <div
+      class="mt-[var(--space-stack-lg)] flex flex-wrap items-center justify-center gap-4 sm:gap-6"
+    >
+      <div class="text-foreground-muted flex items-center gap-2 text-sm">
+        <Icon name="check-circle" size="sm" class="text-brand-500" />
+        100% audit-ready reporting
+      </div>
+      <div class="text-foreground-muted flex items-center gap-2 text-sm">
+        <Icon name="shield-check" size="sm" class="text-brand-500" />
+        HIPAA & SOC2 Certified
+      </div>
+      <div class="text-foreground-muted flex items-center gap-2 text-sm">
+        <Icon name="brain" size="sm" class="text-brand-500" />
+        Proprietary AI engine
+      </div>
+    </div>
   </Hero>
 
-  <!-- Services Section -->
-  <section class="relative z-10 py-[var(--space-section-md)] bg-background-secondary border-t border-border">
-    <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
+  <!-- How It Works -->
+  <section
+    class="bg-background-secondary border-border relative z-10 border-t py-[var(--space-section-md)]"
+  >
+    <div class="mx-auto flex max-w-6xl flex-col gap-8 px-6">
       <div class="flex flex-col items-center gap-4 text-center" data-reveal>
         <div class="flex flex-col items-center gap-6">
-          <Badge variant="brand" pill>Services</Badge>
-          <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-            What I do
+          <Badge variant="brand" pill>How It Works</Badge>
+          <h2 class="font-display text-foreground text-3xl font-bold md:text-4xl">
+            One Platform, Built by Frontline Home &amp; Community-Based Care Teams
           </h2>
         </div>
-        <p class="text-lg text-foreground-muted max-w-2xl mx-auto">
-          From concept to launch.
-        </p>
       </div>
 
-      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal data-reveal-delay="1">
-        <!-- Web Design -->
-        <Card hover>
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="layout" size="sm" />
+      <div class="grid gap-6 md:grid-cols-3" data-reveal data-reveal-delay="1">
+        <!-- Step 1: Document -->
+        <Card variant="elevated" padding="lg" hover>
+          <div class="flex h-full flex-col gap-4">
+            <div class="text-brand-500 mb-2">
+              <span class="font-display text-5xl font-bold opacity-30">1</span>
             </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-foreground">Web Design</h3>
-              <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
-                Clean, modern interfaces that look great on every screen. Focused on clarity, usability, and your brand identity.
-              </p>
+            <div
+              class="from-brand-500/20 to-brand-500/5 text-brand-500 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br"
+            >
+              <Icon name="file-text" size="md" />
             </div>
+            <h3 class="font-display text-foreground text-xl font-bold">Document</h3>
+            <p class="text-foreground-muted flex-1 leading-relaxed">
+              Automated screenings, triage, and documentation with live decision support.
+            </p>
           </div>
         </Card>
 
-        <!-- Web Development -->
-        <Card hover>
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="code" size="sm" />
+        <!-- Step 2: Engage -->
+        <Card variant="elevated" padding="lg" hover>
+          <div class="flex h-full flex-col gap-4">
+            <div class="text-brand-500 mb-2">
+              <span class="font-display text-5xl font-bold opacity-30">2</span>
             </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-foreground">Web Development</h3>
-              <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
-                Fast, accessible websites built with modern tooling. Astro, Tailwind, and best-practice architecture from day one.
-              </p>
+            <div
+              class="from-brand-500/20 to-brand-500/5 text-brand-500 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br"
+            >
+              <Icon name="users" size="md" />
             </div>
+            <h3 class="font-display text-foreground text-xl font-bold">Engage</h3>
+            <p class="text-foreground-muted flex-1 leading-relaxed">
+              Referrals, warm handoffs, care planning, and follow-up — all in one place, with AI
+              assistance to close the loop.
+            </p>
           </div>
         </Card>
 
-        <!-- Performance -->
-        <Card hover>
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="zap" size="sm" />
+        <!-- Step 3: Track -->
+        <Card variant="elevated" padding="lg" hover>
+          <div class="flex h-full flex-col gap-4">
+            <div class="text-brand-500 mb-2">
+              <span class="font-display text-5xl font-bold opacity-30">3</span>
             </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-foreground">Performance Optimization</h3>
-              <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
-                Core Web Vitals, SEO, and page speed — built in from the start, not bolted on at the end.
-              </p>
+            <div
+              class="from-brand-500/20 to-brand-500/5 text-brand-500 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br"
+            >
+              <Icon name="bar-chart-3" size="md" />
             </div>
+            <h3 class="font-display text-foreground text-xl font-bold">Track</h3>
+            <p class="text-foreground-muted flex-1 leading-relaxed">
+              Live visibility of caseload and cohorts, automated reporting and billing.
+            </p>
           </div>
         </Card>
-      </div>
-    </div>
-  </section>
-
- <!-- About Teaser -->
-  <section class="relative z-10 py-[var(--space-section-md)] bg-background border-t border-border">
-    <div class="mx-auto max-w-6xl px-6">
-      <div class="grid gap-12 lg:grid-cols-2">
-        <div class="flex flex-col justify-center" data-reveal>
-          <div class="flex flex-col gap-6 mb-6">
-            <Badge variant="brand" pill class="self-start">About me</Badge>
-            <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-              Designer, developer,<br />
-              <span class="text-brand-500">and blogger.</span>
-            </h2>
-          </div>
-          <p class="text-lg text-foreground-muted leading-relaxed mb-4">
-           Sixteen years of hands-on experience{siteConfig.address?.city ? `, based in ${siteConfig.address.city}` : ''} and available for clients worldwide. I build with Astro because it aligns with how I think about the web: lean, purposeful, and built to last.
-          </p>
-          <p class="text-lg text-foreground-muted leading-relaxed mb-8">
-           On the blog, I share the ideas and decisions that shape my work.
-          </p>
-           <Button variant="outline" href="/about" class="self-start">
-            More about me
-          </Button>
-        </div>
-        <Card variant="elevated" padding="lg" class="h-full flex flex-col" data-reveal data-reveal-delay="1">
-          <p class="text-sm text-foreground mb-5 text-center">A few things about me.</p>
-          <div class="grid grid-cols-2 gap-3 flex-1 auto-rows-fr">
-            <div class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 cursor-default h-full">
-              <Icon name="history" class="w-10 h-10 text-brand-500" />
-              <p class="text-sm font-semibold text-foreground">16 Years Experience</p>
-            </div>
-            <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 h-full">
-              <svg class="w-10 h-10 text-brand-500" viewBox="0 0 1280 1280" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M815.039 94.6439C824.758 106.709 829.714 122.99 839.626 155.553L1056.17 866.901C976.107 825.368 889.072 795.413 797.281 779.252L656.29 302.798C653.983 295.002 646.822 289.654 638.693 289.654C630.542 289.654 623.368 295.03 621.08 302.853L481.795 779.011C389.579 795.1 302.146 825.109 221.741 866.793L439.347 155.388L439.348 155.388C449.291 122.882 454.262 106.629 463.982 94.5853C472.562 83.9531 483.723 75.6958 496.4 70.6002C510.76 64.8284 527.756 64.8284 561.749 64.8284H717.174C751.212 64.8284 768.23 64.8284 782.603 70.6123C795.292 75.7184 806.459 83.9923 815.039 94.6439Z" fill="currentColor"/>
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M840.951 900.754C805.253 931.279 734.002 952.097 651.929 952.097C551.197 952.097 466.767 920.737 444.363 878.561C436.354 902.732 434.558 930.396 434.558 948.068C434.558 948.068 429.281 1034.84 489.636 1095.2C489.636 1063.86 515.042 1038.46 546.381 1038.46C600.097 1038.46 600.036 1085.32 599.987 1123.34C599.986 1124.48 599.984 1125.61 599.984 1126.73C599.984 1184.44 635.255 1233.91 685.416 1254.77C677.924 1239.36 673.721 1222.05 673.721 1203.77C673.721 1148.73 706.034 1128.23 743.588 1104.41L743.588 1104.41C773.469 1085.46 806.668 1064.41 829.548 1022.17C841.486 1000.13 848.265 974.893 848.265 948.068C848.265 931.573 845.702 915.676 840.951 900.754Z" fill="currentColor"/>
-              </svg>
-              <p class="text-sm font-semibold text-foreground">Building with Astro</p>
-            </a>
-            <div class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 cursor-default h-full">
-              <Icon name="globe" class="w-10 h-10 text-brand-500" />
-              <p class="text-sm font-semibold text-foreground">Working worldwide</p>
-            </div>
-            <div class="bg-background-tertiary rounded-xl p-5 flex flex-col items-center justify-center text-center gap-2 border-t-2 border-brand-500/40 transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-brand-500 cursor-default h-full">
-              <Icon name="map-pin" class="w-10 h-10 text-brand-500" />
-              <p class="text-sm font-semibold text-foreground">Based in <br class="sm:hidden" />{siteConfig.address?.city ?? 'Your City'}{siteConfig.address?.country ? `, ${siteConfig.address.country}` : ''}</p>
-            </div>
-          </div>
-        </Card>
-      </div>
-    </div>
-  </section>
-
-  <!-- Portfolio -->
-  <section id="work" class="relative z-10 py-[var(--space-section-md)] bg-background-secondary border-t border-border">
-    <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
-      <div class="flex flex-col items-center gap-4 text-center" data-reveal>
-        <div class="flex flex-col items-center gap-6">
-          <Badge variant="brand" pill>Selected work</Badge>
-          <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-            Projects I've built
-          </h2>
-        </div>
-        <p class="text-lg text-foreground-muted max-w-2xl mx-auto">
-          A selection of recent work.
-        </p>
-      </div>
-
-      <div class="grid gap-6 md:grid-cols-2" data-reveal data-reveal-delay="1">
-        {featuredProjects.map((project) => (
-          <Card variant="elevated" hover padding="lg" href={`/projects/${project.id.replace(/\.mdx?$/, '')}`} class="group flex flex-col">
-            <div class="flex flex-1 flex-col">
-              <div class="mb-3 flex items-start justify-between gap-4">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-                  <Icon name="layers" size="sm" />
-                </div>
-                <Icon name="arrow-up-right" size="sm" class="text-foreground-muted group-hover:text-brand-500 transition-colors shrink-0" />
-              </div>
-              <div class="mb-2 flex items-baseline gap-2">
-                <h3 class="font-display text-lg font-bold text-foreground">{project.data.title}</h3>
-                {project.data.year && (
-                  <span class="text-xs text-foreground-muted">{project.data.year}</span>
-                )}
-              </div>
-              <p class="text-sm text-foreground-muted leading-relaxed mb-4 flex-1">{project.data.description}</p>
-              <div class="flex flex-wrap gap-1.5">
-                {project.data.tags.map((tag) => (
-                  <Badge variant="brand">{tag}</Badge>
-                ))}
-              </div>
-            </div>
-          </Card>
-        ))}
       </div>
     </div>
   </section>
 
   <!-- Testimonials -->
-  <section class="relative z-10 py-[var(--space-section-md)] bg-background border-t border-border">
-    <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
+  <section class="bg-background border-border relative z-10 border-t py-[var(--space-section-md)]">
+    <div class="mx-auto flex max-w-6xl flex-col gap-8 px-6">
       <div class="flex flex-col items-center gap-4 text-center" data-reveal>
         <div class="flex flex-col items-center gap-6">
           <Badge variant="brand" pill>Testimonials</Badge>
-          <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-            What clients say
+          <h2 class="font-display text-foreground text-3xl font-bold md:text-4xl">
+            What Care Teams Are Saying
           </h2>
         </div>
-        <p class="text-lg text-foreground-muted">
-          Replace these with your own client quotes.
+        <p class="text-foreground-muted mx-auto max-w-2xl text-lg">
+          Built by community health workers, social workers, and nurse care managers in health and
+          human services, mobile health, and hospital discharge.
         </p>
       </div>
 
-      <div class="grid gap-6 md:grid-cols-2" data-reveal data-reveal-delay="1">
-        <!-- Testimonial 1 -->
-        <Card variant="elevated" padding="lg" hover>
-          <div class="flex flex-col h-full gap-4">
-            <div class="flex gap-1 text-brand-500" role="img" aria-label="5 out of 5 stars">
-              {[...Array(5)].map(() => (
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hidden="true">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <blockquote class="flex-1 text-foreground-muted leading-relaxed">
-              "The new site launched on time and hit every goal we set. Performance improved dramatically — load times dropped and the feedback from our customers has been overwhelmingly positive."
-            </blockquote>
-            <div class="flex items-center gap-3 pt-4 border-t border-border">
-              <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-500/30 to-brand-500/10 flex items-center justify-center text-brand-500 font-bold text-sm shrink-0">
-                A
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal data-reveal-delay="1">
+        {
+          TESTIMONIALS.map((testimonial) => (
+            <Card variant="elevated" padding="lg" hover>
+              <div class="flex h-full flex-col gap-4">
+                <div class="text-brand-500" aria-hidden="true">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor">
+                    <path d="M10 18c-3.3 0-6-2.7-6-6 0-4.4 3.6-8 8-8 .5 0 1 0 1.5.1C13.5 3.5 16 2 18.5 2c3.9 0 7 3.1 7 7 0 4.2-3.4 7.5-7.5 7.5H14l-2 5.5c-.3.8-1.2 1.2-2 1H10z" />
+                  </svg>
+                </div>
+                <blockquote class="text-foreground-muted flex-1 text-sm leading-relaxed">
+                  "{testimonial.quote}"
+                </blockquote>
+                <div class="border-border flex items-center gap-3 border-t pt-4">
+                  <div class="from-brand-500/30 to-brand-500/10 text-brand-500 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold">
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p class="text-foreground text-sm font-semibold">{testimonial.name}</p>
+                    <p class="text-foreground-muted text-xs">{testimonial.title}</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p class="text-sm font-semibold text-foreground">Alex Morgan</p>
-                <p class="text-xs text-foreground-muted">Founder, Bright Studio</p>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        <!-- Testimonial 2 -->
-        <Card variant="elevated" padding="lg" hover>
-          <div class="flex flex-col h-full gap-4">
-            <div class="flex gap-1 text-brand-500" role="img" aria-label="5 out of 5 stars">
-              {[...Array(5)].map(() => (
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hidden="true">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <blockquote class="flex-1 text-foreground-muted leading-relaxed">
-              "Straightforward from first conversation to final handover. The right questions were asked, we were kept in the loop throughout, and the end result exceeded what we imagined. Would recommend without hesitation."
-            </blockquote>
-            <div class="flex items-center gap-3 pt-4 border-t border-border">
-              <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-500/30 to-brand-500/10 flex items-center justify-center text-brand-500 font-bold text-sm shrink-0">
-                S
-              </div>
-              <div>
-                <p class="text-sm font-semibold text-foreground">Sarah Chen</p>
-                <p class="text-xs text-foreground-muted">CEO, Luma Agency</p>
-              </div>
-            </div>
-          </div>
-        </Card>
+            </Card>
+          ))
+        }
       </div>
     </div>
   </section>
 
-  <!-- Blog -->
-  <section class="relative z-10 py-[var(--space-section-md)] bg-background-secondary border-t border-border">
-    <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
-      <div class="flex items-end justify-between" data-reveal>
-        <div class="flex flex-col gap-6">
-          <Badge variant="brand" pill class="self-start">From the blog</Badge>
-          <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-            Featured
+  <!-- Populations Served -->
+  <section
+    class="bg-background-secondary border-border relative z-10 border-t py-[var(--space-section-md)]"
+  >
+    <div class="mx-auto flex max-w-6xl flex-col gap-8 px-6">
+      <div class="flex flex-col items-center gap-4 text-center" data-reveal>
+        <div class="flex flex-col items-center gap-6">
+          <Badge variant="brand" pill>Populations Served</Badge>
+          <h2 class="font-display text-foreground text-3xl font-bold md:text-4xl">
+            Reducing barriers in...
           </h2>
         </div>
-        <a href="/blog" class="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-brand-500 hover:text-brand-600 transition-colors shrink-0">
-          View all posts
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-3" data-reveal data-reveal-delay="1">
+        {
+          POPULATIONS.map((population) => (
+            <Badge variant="brand" pill class="px-4 py-2 text-sm">
+              {population}
+            </Badge>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA: Co-create a future -->
+  <section class="bg-background border-border relative z-10 border-t py-[var(--space-section-md)]">
+    <div class="mx-auto max-w-2xl px-6 text-center" data-reveal>
+      <h2 class="font-display text-foreground mb-4 text-4xl font-bold text-balance">
+        Co-create a future where care is operational, equitable, and financially sustainable.
+      </h2>
+      <div class="mt-8">
+        <Button size="lg" href="mailto:info@elorahq.com">
+          Book a Demo
           <Icon name="arrow-right" size="sm" />
-        </a>
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section
+    class="bg-background-secondary border-border relative z-10 border-t py-[var(--space-section-md)]"
+  >
+    <div class="mx-auto flex max-w-3xl flex-col gap-8 px-6">
+      <div class="flex flex-col items-center gap-4 text-center" data-reveal>
+        <div class="flex flex-col items-center gap-6">
+          <Badge variant="brand" pill>FAQ</Badge>
+          <h2 class="font-display text-foreground text-3xl font-bold md:text-4xl">
+            Frequently Asked Questions
+          </h2>
+        </div>
+      </div>
+
+      <div data-reveal data-reveal-delay="1">
+        <Accordion items={FAQ_ITEMS} />
+      </div>
+
+      <div class="text-center" data-reveal>
+        <p class="text-foreground-muted text-sm">
+          Have more questions? Email us at{' '}
+          <a href="mailto:info@elorahq.com" class="text-brand-500 hover:underline">
+            info@elorahq.com
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust First Guarantee -->
+  <section class="bg-background border-border relative z-10 border-t py-[var(--space-section-md)]">
+    <div class="mx-auto flex max-w-6xl flex-col gap-8 px-6">
+      <div class="flex flex-col items-center gap-4 text-center" data-reveal>
+        <div class="flex flex-col items-center gap-6">
+          <Badge variant="brand" pill>Trust First Guarantee</Badge>
+          <h2 class="font-display text-foreground text-3xl font-bold md:text-4xl">
+            Your client data is yours.
+          </h2>
+        </div>
+        <p class="text-foreground-muted mx-auto max-w-2xl text-lg leading-relaxed">
+          Proprietary AI and Data Privacy framework. Hospital-grade security and compliance. We
+          steward your data with Responsible AI to empower, not replace, your team — and always, to
+          put trust and safety first.
+        </p>
       </div>
 
       <div class="grid gap-6 md:grid-cols-3" data-reveal data-reveal-delay="1">
-        {posts.map((post) => (
-          <BlogCard
-            title={post.data.title}
-            description={post.data.description}
-            href={`/blog/${post.id.replace('en/', '')}`}
-            publishedAt={post.data.publishedAt}
-            tags={post.data.tags}
-            author={post.data.author}
-            image={post.data.image}
-            svgSlug={post.data.svgSlug}
-          />
-        ))}
-      </div>
+        <Card variant="elevated" padding="lg" hover>
+          <div class="flex flex-col items-center gap-4 text-center">
+            <div
+              class="from-brand-500/20 to-brand-500/5 text-brand-500 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br"
+            >
+              <Icon name="lock" size="md" />
+            </div>
+            <h3 class="font-display text-foreground text-lg font-bold">Data Ownership</h3>
+            <p class="text-foreground-muted text-sm leading-relaxed">
+              Your client data is yours. We never use it to train our AI models.
+            </p>
+          </div>
+        </Card>
 
-      <div class="text-center sm:hidden">
-        <Button variant="outline" href="/blog">
-          View all posts
-          <Icon name="arrow-right" size="sm" />
-        </Button>
+        <Card variant="elevated" padding="lg" hover>
+          <div class="flex flex-col items-center gap-4 text-center">
+            <div
+              class="from-brand-500/20 to-brand-500/5 text-brand-500 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br"
+            >
+              <Icon name="shield" size="md" />
+            </div>
+            <h3 class="font-display text-foreground text-lg font-bold">Hospital-Grade Security</h3>
+            <p class="text-foreground-muted text-sm leading-relaxed">
+              HIPAA and SOC2 certified with enterprise-level compliance.
+            </p>
+          </div>
+        </Card>
+
+        <Card variant="elevated" padding="lg" hover>
+          <div class="flex flex-col items-center gap-4 text-center">
+            <div
+              class="from-brand-500/20 to-brand-500/5 text-brand-500 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br"
+            >
+              <Icon name="heart-handshake" size="md" />
+            </div>
+            <h3 class="font-display text-foreground text-lg font-bold">Responsible AI</h3>
+            <p class="text-foreground-muted text-sm leading-relaxed">
+              We empower, not replace, your team — always putting trust and safety first.
+            </p>
+          </div>
+        </Card>
       </div>
     </div>
   </section>
 
- <!-- CTA -->
-  <section class="relative z-10 py-[var(--space-section-md)] bg-background">
+  <!-- Final CTA: Ready to Empower Your Team -->
+  <section
+    class="bg-background-secondary border-border relative z-10 border-t py-[var(--space-section-md)]"
+  >
     <div class="mx-auto max-w-2xl px-6 text-center" data-reveal>
-      <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">
-        Have a project in mind?
+      <h2 class="font-display text-foreground mb-4 text-4xl font-bold text-balance">
+        Ready to Empower Your Team?
       </h2>
-      <p class="text-lg text-foreground-muted mb-8 text-balance">
-        Whether it's a new build or something that needs a fresh perspective — I'd love to hear about it.
+      <p class="text-foreground-muted mb-8 text-lg text-balance">
+        See how Elora can transform your care operations and give your team back their time.
       </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <Button size="lg" href="/contact">
-          Start a project
-          <Icon name="arrow-right" size="sm" />
-        </Button>
-        <Button size="lg" variant="outline" href="/about">
-          More about me
-        </Button>
-      </div>
+      <Button size="lg" href="mailto:info@elorahq.com">
+        Book Your Demo
+        <Icon name="arrow-right" size="sm" />
+      </Button>
     </div>
   </section>
-
-<script>
-  function initCountup() {
-    const counters = document.querySelectorAll<HTMLElement>('[data-countup]:not([data-countup-init])');
-    if (counters.length === 0) return;
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        observer.unobserve(entry.target);
-        const el = entry.target as HTMLElement;
-        const target = parseInt(el.dataset.countup ?? '0', 10);
-        const suffix = el.dataset.suffix ?? '';
-        const duration = 1200;
-        const start = performance.now();
-        const tick = (now: number) => {
-          const elapsed = now - start;
-          const progress = Math.min(elapsed / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          el.textContent = Math.round(eased * target) + suffix;
-          if (progress < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      });
-    }, { threshold: 0.4 });
-    counters.forEach((el) => {
-      el.dataset.countupInit = 'true';
-      observer.observe(el);
-    });
-  }
-
-  document.addEventListener('astro:page-load', initCountup);
-</script>
 </LandingLayout>
